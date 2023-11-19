@@ -1,9 +1,10 @@
 package com.mikhail.spring.springboot.springboot_rest.dao;
 
 import com.mikhail.spring.springboot.springboot_rest.entity.Employee;
+//import org.hibernate.Session;
+//import org.hibernate.query.Query;
 import jakarta.persistence.EntityManager;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
+import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -18,9 +19,12 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     @Override
     public List<Employee> getAllEmployees() {
 
-        Session session = entityManager.unwrap(Session.class);
+//        Session session = entityManager.unwrap(Session.class);
+//
+//        Query<Employee> query = session.createQuery("from Employee", Employee.class);
+//        List<Employee> allEmployees = query.getResultList();
 
-        Query<Employee> query = session.createQuery("from Employee", Employee.class);
+        Query query = entityManager.createQuery("from Employee", Employee.class);
         List<Employee> allEmployees = query.getResultList();
 
         return allEmployees;
@@ -28,18 +32,24 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 
     @Override
     public void saveEmployee(Employee employee) {
-        Session session = entityManager.unwrap(Session.class);
+//        Session session = entityManager.unwrap(Session.class);
+//
+//        // при совпадении primary key будет происходить update
+//        session.saveOrUpdate(employee);
 
-        // при совпадении primary key будет происходить update
-        session.saveOrUpdate(employee);
+        entityManager.merge(employee);
     }
 
     @Override
     public void delEmployee(int empId) {
-        Session session = entityManager.unwrap(Session.class);
-
-        Query<Employee> query = session.createQuery("delete from Employee where id =:employeeId");
+//        Session session = entityManager.unwrap(Session.class);
+//
+//        Query<Employee> query = session.createQuery("delete from Employee where id =:employeeId");
         // bind значения на метку
+//        query.setParameter("employeeId", empId);
+//        query.executeUpdate();
+
+        Query query = entityManager.createQuery("delete from Employee where id =:employeeId");
         query.setParameter("employeeId", empId);
         query.executeUpdate();
 
@@ -49,9 +59,12 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 
     @Override
     public Employee getEmployee(int empId) {
-        Session session = entityManager.unwrap(Session.class);
+//        Session session = entityManager.unwrap(Session.class);
+//
+//        Employee employee = session.get(Employee.class, empId);
 
-        Employee employee = session.get(Employee.class, empId);
+        Employee employee = entityManager.find(Employee.class, empId);
+
         return  employee;
     }
 
